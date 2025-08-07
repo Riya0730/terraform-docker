@@ -1,0 +1,88 @@
+# steps to run the file
+$ terraform init
+Initializing the backend...
+Initializing provider plugins...
+- Finding kreuzwerker/docker versions matching "~> 3.0.2"...
+- Installing kreuzwerker/docker v3.0.2...
+- Installed kreuzwerker/docker v3.0.2 (signed by a HashiCorp partner, key ID ...)
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure.
+
+$ terraform plan
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.nginx_container will be created
+  + resource "docker_container" "nginx_container" {
+      + id          = (known after apply)
+      + image       = (known after apply)
+      + name        = "my-nginx"
+      + ports {
+          + external = 8080
+          + internal = 80
+        }
+    }
+
+  # docker_image.nginx will be created
+  + resource "docker_image" "nginx" {
+      + id           = (known after apply)
+      + keep_locally = false
+      + name         = "nginx:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+$ terraform apply
+Terraform will perform the following actions:
+
+  # docker_container.nginx_container will be created
+  + resource "docker_container" "nginx_container" {
+      + id          = (known after apply)
+      + image       = (known after apply)
+      + name        = "my-nginx"
+      + ports {
+          + external = 8080
+          + internal = 80
+        }
+    }
+
+  # docker_image.nginx will be created
+  + resource "docker_image" "nginx" {
+      + id           = (known after apply)
+      + keep_locally = false
+      + name         = "nginx:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+docker_image.nginx: Creating...
+docker_image.nginx: Creation complete after 2s
+docker_container.nginx_container: Creating...
+docker_container.nginx_container: Creation complete after 3s
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+$ docker ps
+CONTAINER ID       IMAGE          COMMAND                  CREATED         STATUS         PORTS                  NAMES
+3c1f9a7b2e8d       nginx:latest   "/docker-entrypoint.…"   10 seconds ago  Up 10 seconds  0.0.0.0:8080->80/tcp   my-nginx
+
+$ terraform state list
+docker_container.nginx_container
+docker_image.nginx
+
+$ terraform destroy
+docker_container.nginx_container: Destroying... [id=3c1f9a7b2e8d]
+docker_container.nginx_container: Destruction complete after 1s
+docker_image.nginx: Destroying... [id=sha256:...]
+docker_image.nginx: Destruction complete after 1s
+
+Destroy complete! Resources: 2 destroyed.
